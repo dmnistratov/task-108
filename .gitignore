@@ -1,6 +1,6 @@
 build
 *.egg-info
 __pycache__
-proto
+proto/*
 !__init__.py
 !messages.proto
