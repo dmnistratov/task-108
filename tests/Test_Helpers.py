@@ -60,10 +60,10 @@ class ParseDelimitedTest(unittest.TestCase):
         data = ""
 
         # Tests string as message without length-prefixed.
-        data = "String test"
+        data = b"String test"
         parsedMessage, bytesConsumed =  parseDelimited(data, WrapperMessage)
         self.assertEqual(None, parsedMessage)
-        self.assertEqual(len(data), bytesConsumed)
+        self.assertEqual(0, bytesConsumed)
 
         # Tests message without length-prefixed.
         message.request_for_fast_response.SetInParent()
@@ -104,6 +104,11 @@ class ParseDelimitedTest(unittest.TestCase):
         message = "Hello, world!"
 
         data =  _VarintBytes(len(message)) + str.encode(message)
-        parsedMessage, bytesConsumed =  parseDelimited(data, str)
-        self.assertEqual(None , parsedMessage)
-        self.assertEqual(len(data), bytesConsumed)
+        self.assertRaises(AttributeError, parseDelimited, data, str)
+
+        self.assertRaises(AttributeError, parseDelimited, data, list)
+
+    def test_nonbyte_data(self):
+        message = "Hello, world!"
+
+        self.assertRaises(TypeError, parseDelimited, message, WrapperMessage)

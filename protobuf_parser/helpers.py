@@ -8,10 +8,7 @@ def parseDelimited(data : bytes, message_type : Generic[T]) -> tuple[T, int]:
     if (data is None or len(data) == 0):
         return None, 0
 
-    try:
-        message_size, pos = _DecodeVarint32(data, 0)
-    except TypeError:
-        return None, len(data)
+    message_size, pos = _DecodeVarint32(data, 0)
 
     if (message_size + pos > len(data) or pos == 0):
         return None, 0
@@ -22,7 +19,7 @@ def parseDelimited(data : bytes, message_type : Generic[T]) -> tuple[T, int]:
 
     try:
         message.ParseFromString(current_message)
-    except (DecodeError, AttributeError):
+    except (DecodeError):
         return None, pos + message_size
 
     return message, pos + message_size
